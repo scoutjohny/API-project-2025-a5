@@ -144,5 +144,16 @@ public class UserTests extends Config implements UserEndpoints {
                 .when().post(CREATE_USER);
 
         Assert.assertEquals(response.getStatusCode(), 200);
+        String id = response.jsonPath().get("id");
+        String firstName = response.jsonPath().get("firstName");
+
+        Response response1 = given()
+                .pathParam("id",id)
+                .when().get(Constants.GET_USER_BY_ID);
+
+        Assert.assertEquals(response1.getStatusCode(), 200, "Expected 200 but got: " + response.getStatusCode());
+        String actualFirstName = response1.jsonPath().get("firstName");
+
+        Assert.assertEquals(actualFirstName, firstName);
     }
 }

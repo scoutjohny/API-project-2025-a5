@@ -1,5 +1,6 @@
 package tests;
 
+import config.Config;
 import endpoints.UserEndpoints;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
@@ -12,7 +13,7 @@ import java.util.Map;
 
 import static io.restassured.RestAssured.given;
 
-public class UserTests implements UserEndpoints {
+public class UserTests extends Config implements UserEndpoints {
 
     @Test
     public void test1(){
@@ -35,14 +36,8 @@ public class UserTests implements UserEndpoints {
         map.put("limit", 5);
 
         Response response = given()
-                .baseUri("https://dummyapi.io/data")
-                .basePath("/v1/")
-                .header("app-id","6818f1db630bd90adcce8c16")
                 .queryParams(map)
-                .log().all()
-                .when().get(GET_ALL_USERS);
-
-        response.prettyPeek();
+                .when().get(Constants.GET_ALL_USERS);
 
         Assert.assertEquals(response.getStatusCode(), 200, "Expected 200 but got: " + response.getStatusCode());
         String actualFirstName = response.jsonPath().get("data[0].firstName");
@@ -57,11 +52,7 @@ public class UserTests implements UserEndpoints {
         map.put("limit", 5);
 
         JsonPath jsonPath = given()
-                .baseUri("https://dummyapi.io/data")
-                .basePath("/v1/")
-                .header("app-id","6818f1db630bd90adcce8c16")
                 .queryParams(map)
-                .log().all()
                 .when().get(Constants.GET_ALL_USERS).getBody().jsonPath();
 
         String actualFirstName = jsonPath.getString("data[0].firstName");
@@ -73,14 +64,8 @@ public class UserTests implements UserEndpoints {
     public void getUserByIDTest(){
 
         Response response = given()
-                .baseUri("https://dummyapi.io/data")
-                .basePath("/v1/")
-                .header("app-id","6818f1db630bd90adcce8c16")
-                .log().all()
                 .pathParam("id","60d0fe4f5311236168a109d4")
                 .when().get(Constants.GET_USER_BY_ID);
-
-        response.prettyPeek();
 
         Assert.assertEquals(response.getStatusCode(), 200, "Expected 200 but got: " + response.getStatusCode());
         String actualFirstName = response.jsonPath().get("firstName");
@@ -95,14 +80,8 @@ public class UserTests implements UserEndpoints {
         map.put("limit", 5);
 
         Response response = given()
-                .baseUri("https://dummyapi.io/data")
-                .basePath("/v1/")
-                .header("app-id","6818f1db630bd90adcce8c16")
                 .queryParams(map)
-                .log().all()
                 .when().get(GET_ALL_USERS);
-
-        response.prettyPeek();
 
         Assert.assertEquals(response.getStatusCode(), 200, "Expected 200 but got: " + response.getStatusCode());
         String userId = "";
@@ -114,18 +93,56 @@ public class UserTests implements UserEndpoints {
         }
 
         Response response1 = given()
-                .baseUri("https://dummyapi.io/data")
-                .basePath("/v1/")
-                .header("app-id","6818f1db630bd90adcce8c16")
-                .log().all()
                 .pathParam("id",userId)
                 .when().get(Constants.GET_USER_BY_ID);
-
-        response1.prettyPeek();
 
         Assert.assertEquals(response1.getStatusCode(), 200, "Expected 200 but got: " + response.getStatusCode());
         String actualFirstName = response1.jsonPath().get("firstName");
 
         Assert.assertEquals(actualFirstName, "Valentin");
+    }
+
+    @Test
+    public void deleteUserByIDTest(){
+        String userID = "60d0fe4f5311236168a109d4";
+        Response response = given()
+                .pathParam("id",userID)
+                .when().delete(Constants.DELETE_USER_BY_ID);
+
+        Assert.assertEquals(response.getStatusCode(), 200, "Expected 200 but got: " + response.getStatusCode());
+        String id = response.jsonPath().get("id");
+
+        Assert.assertEquals(id, userID);
+
+        Response response1 = given()
+                .pathParam("id",userID)
+                .when().delete(Constants.DELETE_USER_BY_ID);
+        Assert.assertEquals(response1.getStatusCode(), 404, "Expected 404 but got: " + response.getStatusCode());
+    }
+
+    @Test
+    public void createUserTest(){
+
+        Response response = given()
+                .body("{\n" +
+                        "    \"title\": \"miss\",\n" +
+                        "    \"firstName\": \"Naomi\",\n" +
+                        "    \"lastName\": \"Rodrigues\",\n" +
+                        "    \"picture\": \"https://randomuser.me/api/portraits/med/women/25.jpg\",\n" +
+                        "    \"gender\": \"female\",\n" +
+                        "    \"email\": \"naomi.rodrigues9874984514@example.com\",\n" +
+                        "    \"dateOfBirth\": \"1954-10-15T02:26:17.794Z\",\n" +
+                        "    \"phone\": \"993-465-335\",\n" +
+                        "    \"location\": {\n" +
+                        "        \"street\": \"2580, Calle de Ferraz\",\n" +
+                        "        \"city\": \"Albacete\",\n" +
+                        "        \"state\": \"Islas Baleares\",\n" +
+                        "        \"country\": \"Spain\",\n" +
+                        "        \"timezone\": \"-3:30\"\n" +
+                        "    }\n" +
+                        "}")
+                .when().post(CREATE_USER);
+
+        Assert.assertEquals(response.getStatusCode(), 200);
     }
 }

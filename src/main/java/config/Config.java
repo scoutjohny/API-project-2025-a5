@@ -3,21 +3,11 @@ package config;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.builder.ResponseSpecBuilder;
-import io.restassured.config.RestAssuredConfig;
-import io.restassured.filter.Filter;
 import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.filter.log.ResponseLoggingFilter;
-import io.restassured.http.*;
-import io.restassured.mapper.ObjectMapper;
-import io.restassured.mapper.ObjectMapperType;
-import io.restassured.specification.*;
 
-import java.io.File;
-import java.io.InputStream;
-import java.security.KeyStore;
-import java.util.Collection;
+import io.restassured.specification.*;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class Config {

@@ -4,15 +4,21 @@ import config.Config;
 import endpoints.UserEndpoints;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
+import listeners.TestListeners;
+import model.UserRequest;
+import model.UserResponse;
 import org.testng.Assert;
+import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 import utils.Constants;
+import utils.Utils;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static io.restassured.RestAssured.given;
 
+@Listeners(TestListeners.class)
 public class UserTests extends Config implements UserEndpoints {
 
     @Test
@@ -156,4 +162,21 @@ public class UserTests extends Config implements UserEndpoints {
 
         Assert.assertEquals(actualFirstName, firstName);
     }
+
+    @Test
+    public void createUserUsingJavaObjectTest(){
+        UserRequest user = UserRequest.createUser();
+
+        UserResponse userResponse = given()
+                .body(user)
+                .when().post(Constants.CREATE_USER)
+                .getBody().as(UserResponse.class);
+
+        String userId = userResponse.getId();
+        Assert.assertEquals(userResponse.getFirstName(),user.getFirst_Name());
+
+        Utils.createJsonFile("userData", userResponse);
+    }
+
+
 }

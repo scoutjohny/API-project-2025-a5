@@ -106,19 +106,19 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.10.1</version>
+                <version>3.14.1</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.2.2</version>
+                <version>3.5.0</version>
             </plugin>
             <plugin>
                 <groupId>io.gatling</groupId>
                 <artifactId>gatling-maven-plugin</artifactId>
-                <version>4.2.6</version>
+                <version>4.20.16</version>
                 <configuration>
-                    <simulationClass>simulations.UsersSimulations</simulationClass>
+                    <simulationClass>simulations.UsersSimulation</simulationClass>
                 </configuration>
             </plugin>
         </plugins>
